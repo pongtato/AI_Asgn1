@@ -43,6 +43,12 @@
     <Filter Include="Spatial Partition\Header">
       <UniqueIdentifier>{fcd0ecc0-18f3-4a37-b1cf-f1ec17986b7a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="AI Classes">
+      <UniqueIdentifier>{daa88396-8a07-4235-9125-85560cf5171f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AI Classes\Tank">
+      <UniqueIdentifier>{c2be1ae5-ac6e-47b3-a285-122d2ef85e6e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp">
@@ -143,6 +149,12 @@
     </ClCompile>
     <ClCompile Include="Source\SpatialPartition\SpatialPartition.cpp">
       <Filter>Spatial Partition\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AI Classes\AI Parent.cpp">
+      <Filter>AI Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AI Classes\TankAI.cpp">
+      <Filter>AI Classes\Tank</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -259,6 +271,12 @@
     </ClInclude>
     <ClInclude Include="Source\SpatialPartition\SpatialPartition.h">
       <Filter>Spatial Partition\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AI Classes\AI Parent.h">
+      <Filter>AI Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AI Classes\TankAI.h">
+      <Filter>AI Classes\Tank</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
