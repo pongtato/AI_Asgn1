@@ -44,7 +44,8 @@ void Camera3::Init(const Vector3& pos, const Vector3& target, const Vector3& up)
 	}
 
 	// Initialise the camera type
-	sCameraType = LAND_CAM;
+	//sCameraType = LAND_CAM;
+	sCameraType = AIR_CAM;
 
 	// For Jump use
 	m_bJumping		= false;
@@ -141,7 +142,10 @@ new position based on avatars position
 ********************************************************************************/
 void Camera3::UpdatePosition(Vector3 newPosition, Vector3 newDirection)
 {
-	position = newPosition - newDirection.Normalized() * m_fTPVCameraOffset;
+	if (sCameraType == LAND_CAM)
+		position = newPosition - newDirection.Normalized() * m_fTPVCameraOffset;
+	else
+		position = newPosition - newDirection.Normalized();
 	target = newPosition;
 }
 
@@ -177,6 +181,7 @@ void Camera3::MoveForward(const double dt)
 		view.y = 0.0f;
 		view = view.Normalized();
 	}
+
 
 	MoveVel_W = MoveVel_W + CAMERA_ACCEL * (float)dt;
 	if (MoveVel_W > CAMERA_SPEED)

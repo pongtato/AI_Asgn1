@@ -114,7 +114,8 @@ void CPlayState::HandleEvents(CGameStateManager* theGSM, const unsigned char key
 	}
 	else
 	{
-		scene->UpdateAvatarStatus( key, status );
+		//scene->UpdateAvatarStatus( key, status );
+		scene->UpdateCameraStatus(key, status);
 	}
 }
 

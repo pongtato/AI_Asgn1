@@ -420,9 +420,9 @@ void CSceneManager::Update(double dt)
 	//m_cSceneGraph->ApplyTranslate(currentPos.x - prevPos.x, 0, currentPos.z - prevPos.z);
 	//prevPos = currentPos;
 	//m_cSceneGraph->GetNode(m_cSceneGraph->GetSceneNodeID() * 10 + m_cSceneGraph->GetNumOfChild())->ApplyRotate(dt*2000,0,1,0);
-	m_cAvatar->Update(dt);
-	camera.UpdatePosition(m_cAvatar->GetPosition(), m_cAvatar->GetDirection());
-	//camera.Update(dt);
+	//m_cAvatar->Update(dt);
+	//camera.UpdatePosition(m_cAvatar->GetPosition(), m_cAvatar->GetDirection());
+	camera.Update(dt);
 
 	//Update the spatial partition
 	m_cSpatialPartition->Update();
