@@ -18,6 +18,7 @@ CSceneManager::CSceneManager(void)
 	, m_cWarrior			(NULL)
 	, m_cHealer				(NULL)
 	, m_cMage				(NULL)
+	, m_cBoss				(NULL)
 	, m_cSpatialPartition	(NULL)
 {
 }
@@ -29,6 +30,7 @@ CSceneManager::CSceneManager(const int m_window_width, const int m_window_height
 	, m_cWarrior			(NULL)
 	, m_cHealer				(NULL)
 	, m_cMage				(NULL)
+	, m_cBoss				(NULL)
 	, m_cSpatialPartition	(NULL)
 {
 	this->m_window_width = m_window_width;
@@ -65,6 +67,12 @@ CSceneManager::~CSceneManager(void)
 	{
 		delete m_cMage;
 		m_cMage = NULL;
+	}
+
+	if (m_cBoss)
+	{
+		delete m_cBoss;
+		m_cBoss = NULL;
 	}
 
 	if (m_cAvatar)
@@ -258,6 +266,12 @@ void CSceneManager::Init()
 	meshList[GEO_ROD] = MeshBuilder::GenerateOBJ("Rod", "OBJ//AI/Rod.obj");
 	meshList[GEO_ROD]->textureID = LoadTGA("Image//AI/Weapons.tga");
 
+	meshList[GEO_BOSS] = MeshBuilder::GenerateOBJ("Boss", "OBJ//AI/Boss.obj");
+	meshList[GEO_BOSS]->textureID = LoadTGA("Image//AI/Boss.tga");
+
+	meshList[GEO_BOSS_ARM] = MeshBuilder::GenerateOBJ("Boss_Arm", "OBJ//AI/BossArm.obj");
+	meshList[GEO_BOSS_ARM]->textureID = LoadTGA("Image//AI/Boss.tga");
+
 	//meshList[GEO_WARRIOR] = MeshBuilder::GenerateOBJ("OBJ1", "OBJ//chair.obj");//MeshBuilder::GenerateCube("cube", 1);
 	//meshList[GEO_WARRIOR]->textureID = LoadTGA("Image//chair.tga");
 
@@ -277,10 +291,12 @@ void CSceneManager::Init()
 	m_cWarrior = new CSceneNode();
 	m_cMage = new CSceneNode();
 	m_cHealer = new CSceneNode();
+	m_cBoss = new CSceneNode();
 
 	CModel* newModel = new CModel();
 	newModel->Init(meshList[GEO_WARRIOR]);
 	m_cWarrior->SetNode(new CTransform(0, 0, 0), newModel);
+	m_cWarrior->SetSceneNodeID(2);
 
 	newModel = new CModel();
 	newModel->Init(meshList[GEO_SWORD]);
@@ -293,6 +309,7 @@ void CSceneManager::Init()
 	newModel = new CModel();
 	newModel->Init(meshList[GEO_HEALER]);
 	m_cHealer->SetNode(new CTransform(0, 0, 15), newModel);
+	m_cHealer->SetSceneNodeID(3);
 
 	newModel = new CModel();
 	newModel->Init(meshList[GEO_ROD]);
@@ -301,10 +318,24 @@ void CSceneManager::Init()
 	newModel = new CModel();
 	newModel->Init(meshList[GEO_MAGE]);
 	m_cMage->SetNode(new CTransform(0, 0, 30), newModel);
+	m_cMage->SetSceneNodeID(4);
 
 	newModel = new CModel();
 	newModel->Init(meshList[GEO_STAFF]);
 	m_cMage->AddChild(new CTransform(0, 0, -5), newModel);
+
+	newModel = new CModel();
+	newModel->Init(meshList[GEO_BOSS]);
+	m_cBoss->SetNode(new CTransform(0, 0, 50), newModel);
+	m_cBoss->SetSceneNodeID(5);
+
+	newModel = new CModel();
+	newModel->Init(meshList[GEO_BOSS_ARM]);
+	m_cBoss->AddChild(new CTransform(0, 5, 6.5f), newModel);
+
+	newModel = new CModel();
+	newModel->Init(meshList[GEO_BOSS_ARM]);
+	m_cBoss->AddChild(new CTransform(0, 5, -6.5f), newModel);
 	
 	//Create spacial partition
 	m_cSpatialPartition = new CSpatialPartition();
@@ -630,6 +661,7 @@ void CSceneManager::RenderMobileObjects()
 	m_cWarrior->Draw(this);
 	m_cHealer->Draw(this);
 	m_cMage->Draw(this);
+	m_cBoss->Draw(this);
 
 	// Render cone
 	modelStack.PushMatrix();

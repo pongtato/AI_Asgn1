@@ -91,6 +91,8 @@ class CSceneManager : public Scene
 		GEO_SHIELD,
 		GEO_STAFF,
 		GEO_ROD,
+		GEO_BOSS,
+		GEO_BOSS_ARM,
 		NUM_GEOMETRY,
 	};
 
@@ -173,6 +175,7 @@ private:
 	CSceneNode* m_cWarrior;
 	CSceneNode* m_cHealer;
 	CSceneNode* m_cMage;
+	CSceneNode* m_cBoss;
 
 	// The spatial partition
 	CSpatialPartition* m_cSpatialPartition;
