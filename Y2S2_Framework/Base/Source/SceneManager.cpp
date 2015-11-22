@@ -206,7 +206,112 @@ void CSceneManager::Init()
 
 	camera.Init(Vector3(0, 0, 10), Vector3(0, 0, 0), Vector3(0, 1, 0));
 
-	for(int i = 0; i < NUM_GEOMETRY; ++i)
+	InitMeshList();
+
+	//meshList[GEO_WARRIOR] = MeshBuilder::GenerateOBJ("OBJ1", "OBJ//chair.obj");//MeshBuilder::GenerateCube("cube", 1);
+	//meshList[GEO_WARRIOR]->textureID = LoadTGA("Image//chair.tga");
+
+	//// Load the texture for minimap
+	//m_cMinimap = new CMinimap();
+	//m_cMinimap->SetBackground(MeshBuilder::GenerateMinimap("MINIMAP", Color(1, 1, 1), 1.f));
+	//m_cMinimap->GetBackground()->textureID = LoadTGA("Image//grass_darkgreen.tga");
+	//m_cMinimap->SetBorder( MeshBuilder::GenerateMinimapBorder("MINIMAPBORDER", Color(1, 1, 0), 1.f) );
+	//m_cMinimap->SetAvatar( MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1.f) );
+
+	//Init and load model
+	m_cAvatar = new CPlayInfo3PV();
+	m_cAvatar->SetModel(MeshBuilder::GenerateCone("cone", Color(0.5f, 1, 0.3f), 36, 10.f, 10.f));
+
+	//Create scenegraph
+	InitSceneGraph();
+	
+	//Create spacial partition
+	m_cSpatialPartition = new CSpatialPartition();
+	m_cSpatialPartition->Init(100, 100, 3, 3);
+	for (int i = 0; i < m_cSpatialPartition->GetxNumOfGrid(); i++)
+	{
+		for (int j = 0; j < m_cSpatialPartition->GetyNumOfGrid(); j++)
+		{
+			m_cSpatialPartition->SetGridMesh(i, j, MeshBuilder::GenerateQuad("GridMesh", Color(1.0f / i, 1.0f / j, 1.0f / (i*j)), 100.f));
+		}
+	}
+
+	m_cSpatialPartition->PrintSelf();
+
+	//Add the pointer to the scene graph
+	m_cSpatialPartition->AddObject(m_cWarrior);
+	m_cSpatialPartition->AddObject(m_cHealer);
+	m_cSpatialPartition->AddObject(m_cMage);
+
+	TankAI.Init();
+	BossAI.Init();
+
+	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 1000 units
+	Mtx44 perspective;
+	perspective.SetToPerspective(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
+	//perspective.SetToOrtho(-80, 80, -60, 60, -1000, 1000);
+	projectionStack.LoadMatrix(perspective);
+	
+	rotateAngle = 0;
+
+	bLightEnabled = true;
+}
+void CSceneManager::InitSceneGraph()
+{
+	m_cSceneGraph = new CSceneNode();
+	m_cWarrior = new CSceneNode();
+	m_cMage = new CSceneNode();
+	m_cHealer = new CSceneNode();
+	m_cBoss = new CSceneNode();
+
+	CModel* newModel = new CModel();
+	newModel->Init(meshList[GEO_WARRIOR]);
+	m_cWarrior->SetNode(new CTransform(0, 0, 0), newModel);
+	m_cWarrior->SetSceneNodeID(2);
+
+	newModel = new CModel();
+	newModel->Init(meshList[GEO_SWORD]);
+	m_cWarrior->AddChild(new CTransform(0, 0, 5), newModel);
+
+	newModel = new CModel();
+	newModel->Init(meshList[GEO_SHIELD]);
+	m_cWarrior->AddChild(new CTransform(0, 0, -5), newModel);
+
+	newModel = new CModel();
+	newModel->Init(meshList[GEO_HEALER]);
+	m_cHealer->SetNode(new CTransform(0, 0, 15), newModel);
+	m_cHealer->SetSceneNodeID(3);
+
+	newModel = new CModel();
+	newModel->Init(meshList[GEO_ROD]);
+	m_cHealer->AddChild(new CTransform(0, 0, -5), newModel);
+
+	newModel = new CModel();
+	newModel->Init(meshList[GEO_MAGE]);
+	m_cMage->SetNode(new CTransform(0, 0, 30), newModel);
+	m_cMage->SetSceneNodeID(4);
+
+	newModel = new CModel();
+	newModel->Init(meshList[GEO_STAFF]);
+	m_cMage->AddChild(new CTransform(0, 0, -5), newModel);
+
+	newModel = new CModel();
+	newModel->Init(meshList[GEO_BOSS]);
+	m_cBoss->SetNode(new CTransform(0, 0, 50), newModel);
+	m_cBoss->SetSceneNodeID(5);
+
+	newModel = new CModel();
+	newModel->Init(meshList[GEO_BOSS_ARM]);
+	m_cBoss->AddChild(new CTransform(0, 5, 6.5f), newModel);
+
+	newModel = new CModel();
+	newModel->Init(meshList[GEO_BOSS_ARM]);
+	m_cBoss->AddChild(new CTransform(0, 5, -6.5f), newModel);
+}
+
+void CSceneManager::InitMeshList()
+{
+	for (int i = 0; i < NUM_GEOMETRY; ++i)
 	{
 		meshList[i] = NULL;
 	}
@@ -272,99 +377,6 @@ void CSceneManager::Init()
 
 	meshList[GEO_BOSS_ARM] = MeshBuilder::GenerateOBJ("Boss_Arm", "OBJ//AI/BossArm.obj");
 	meshList[GEO_BOSS_ARM]->textureID = LoadTGA("Image//AI/Boss.tga");
-
-	//meshList[GEO_WARRIOR] = MeshBuilder::GenerateOBJ("OBJ1", "OBJ//chair.obj");//MeshBuilder::GenerateCube("cube", 1);
-	//meshList[GEO_WARRIOR]->textureID = LoadTGA("Image//chair.tga");
-
-	// Load the texture for minimap
-	m_cMinimap = new CMinimap();
-	m_cMinimap->SetBackground(MeshBuilder::GenerateMinimap("MINIMAP", Color(1, 1, 1), 1.f));
-	m_cMinimap->GetBackground()->textureID = LoadTGA("Image//grass_darkgreen.tga");
-	m_cMinimap->SetBorder( MeshBuilder::GenerateMinimapBorder("MINIMAPBORDER", Color(1, 1, 0), 1.f) );
-	m_cMinimap->SetAvatar( MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1.f) );
-
-	//Init and load model
-	m_cAvatar = new CPlayInfo3PV();
-	m_cAvatar->SetModel(MeshBuilder::GenerateCone("cone", Color(0.5f, 1, 0.3f), 36, 10.f, 10.f));
-
-	//Create scenegraph
-	m_cSceneGraph = new CSceneNode();
-	m_cWarrior = new CSceneNode();
-	m_cMage = new CSceneNode();
-	m_cHealer = new CSceneNode();
-	m_cBoss = new CSceneNode();
-
-	CModel* newModel = new CModel();
-	newModel->Init(meshList[GEO_WARRIOR]);
-	m_cWarrior->SetNode(new CTransform(0, 0, 0), newModel);
-	m_cWarrior->SetSceneNodeID(2);
-
-	newModel = new CModel();
-	newModel->Init(meshList[GEO_SWORD]);
-	m_cWarrior->AddChild(new CTransform(0, 0, 5), newModel);
-
-	newModel = new CModel();
-	newModel->Init(meshList[GEO_SHIELD]);
-	m_cWarrior->AddChild(new CTransform(0, 0, -5), newModel);
-
-	newModel = new CModel();
-	newModel->Init(meshList[GEO_HEALER]);
-	m_cHealer->SetNode(new CTransform(0, 0, 15), newModel);
-	m_cHealer->SetSceneNodeID(3);
-
-	newModel = new CModel();
-	newModel->Init(meshList[GEO_ROD]);
-	m_cHealer->AddChild(new CTransform(0, 0, -5), newModel);
-
-	newModel = new CModel();
-	newModel->Init(meshList[GEO_MAGE]);
-	m_cMage->SetNode(new CTransform(0, 0, 30), newModel);
-	m_cMage->SetSceneNodeID(4);
-
-	newModel = new CModel();
-	newModel->Init(meshList[GEO_STAFF]);
-	m_cMage->AddChild(new CTransform(0, 0, -5), newModel);
-
-	newModel = new CModel();
-	newModel->Init(meshList[GEO_BOSS]);
-	m_cBoss->SetNode(new CTransform(0, 0, 50), newModel);
-	m_cBoss->SetSceneNodeID(5);
-
-	newModel = new CModel();
-	newModel->Init(meshList[GEO_BOSS_ARM]);
-	m_cBoss->AddChild(new CTransform(0, 5, 6.5f), newModel);
-
-	newModel = new CModel();
-	newModel->Init(meshList[GEO_BOSS_ARM]);
-	m_cBoss->AddChild(new CTransform(0, 5, -6.5f), newModel);
-	
-	//Create spacial partition
-	m_cSpatialPartition = new CSpatialPartition();
-	m_cSpatialPartition->Init(100, 100, 3, 3);
-	for (int i = 0; i < m_cSpatialPartition->GetxNumOfGrid(); i++)
-	{
-		for (int j = 0; j < m_cSpatialPartition->GetyNumOfGrid(); j++)
-		{
-			m_cSpatialPartition->SetGridMesh(i, j, MeshBuilder::GenerateQuad("GridMesh", Color(1.0f / i, 1.0f / j, 1.0f / (i*j)), 100.f));
-		}
-	}
-
-	m_cSpatialPartition->PrintSelf();
-
-	//Add the pointer to the scene graph
-	m_cSpatialPartition->AddObject(m_cWarrior);
-	m_cSpatialPartition->AddObject(m_cHealer);
-	m_cSpatialPartition->AddObject(m_cMage);
-
-	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 1000 units
-	Mtx44 perspective;
-	perspective.SetToPerspective(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
-	//perspective.SetToOrtho(-80, 80, -60, 60, -1000, 1000);
-	projectionStack.LoadMatrix(perspective);
-	
-	rotateAngle = 0;
-
-	bLightEnabled = true;
 }
 
 /********************************************************************************
@@ -475,8 +487,10 @@ void CSceneManager::FSMApplication(double dt)
 {
 	#define NOCHILD 0
 
-	TankAI.Init();
+	
 	TankAI.RunFSM(dt);
+	BossAI.RunFSM(dt);
+	
 
 	NodeTranslate(m_cWarrior, NOCHILD, TankAI.GetPosition().x, TankAI.GetPosition().y, TankAI.GetPosition().z);
 
@@ -696,9 +710,9 @@ void CSceneManager::RenderGUI()
 
 	// Render the crosshair
 	// Note that Ortho is set to this size -> 	ortho.SetToOrtho(-80, 80, -60, 60, -10, 10);
-	RenderMeshIn2D( m_cMinimap->GetAvatar(), false, 20.0f, 68, -48, true);
+	/*RenderMeshIn2D( m_cMinimap->GetAvatar(), false, 20.0f, 68, -48, true);
 	RenderMeshIn2D( m_cMinimap->GetBorder(), false, 20.0f, 68, -48);
-	RenderMeshIn2D( m_cMinimap->GetBackground(), false, 20.0f, 68, -48);
+	RenderMeshIn2D( m_cMinimap->GetBackground(), false, 20.0f, 68, -48);*/
 
 	//On screen text
 	std::ostringstream ss;

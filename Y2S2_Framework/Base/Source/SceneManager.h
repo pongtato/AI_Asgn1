@@ -12,6 +12,7 @@
 #include "SceneNode.h"
 #include "SpatialPartition/SpatialPartition.h"
 #include "AI Classes\TankAI.h"
+#include "AI Classes\Boss.h"
 
 
 const float SKYBOXSIZE = 1000.f;
@@ -103,6 +104,8 @@ public:
 	~CSceneManager(void);
 
 	virtual void Init();
+	void InitMeshList();
+	void InitSceneGraph();
 	virtual void Update(double dt);
 	// Update Camera status
 	virtual void UpdateCameraStatus(const unsigned char key, const bool status = true);
@@ -184,6 +187,7 @@ private:
 
 	//AI FSMs
 	CTank TankAI;
+	CBoss BossAI;
 
 	// The spatial partition
 	CSpatialPartition* m_cSpatialPartition;

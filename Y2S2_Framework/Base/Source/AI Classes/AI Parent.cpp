@@ -35,7 +35,7 @@ int CArtificialIntellegence::GetType(void)
 	return type;
 }
 
-Vector3 CArtificialIntellegence::GetPosition()
+Vector3 CArtificialIntellegence::GetPosition(void)
 {
 	return this->Position;
 }
@@ -52,7 +52,57 @@ void CArtificialIntellegence::UpdateRotation(float newRotate)
 	this->m_RotateAmount = (newRotate - GetRotation());
 }
 
-float CArtificialIntellegence::GetRotation()
+float CArtificialIntellegence::GetRotation(void)
 {
 	return this->m_RotateAmount;
+}
+
+// Health
+void CArtificialIntellegence::SetHealth(int health)
+{
+	this->health = health;
+}
+int CArtificialIntellegence::Gethealth(void)
+{
+	return health;
+}
+
+// Attack power 
+void CArtificialIntellegence::SetAttackDamage(int attackPower)
+{
+	this->attackPower = attackPower;
+}
+int CArtificialIntellegence::GetAttackDamage(void)
+{
+	return attackPower;
+}
+
+// Defence Power
+void CArtificialIntellegence::SetDefencePower(int defencePower)
+{
+	this->defencePower = defencePower;
+}
+int CArtificialIntellegence::GetDefencePower(void)
+{
+	return defencePower;
+}
+
+// Attack speed
+void CArtificialIntellegence::SetAttackSpeed(float attackSpeed)
+{
+	this->attackSpeed = attackSpeed;
+}
+float CArtificialIntellegence::GetAttackSpeed(void)
+{
+	return attackSpeed;
+}
+
+// Attack Range
+void CArtificialIntellegence::SetAttackRange(float attackRange)
+{
+	this->attackRange = attackRange;
+}
+float CArtificialIntellegence::GetAttackRange(void)
+{
+	return attackRange;
 }

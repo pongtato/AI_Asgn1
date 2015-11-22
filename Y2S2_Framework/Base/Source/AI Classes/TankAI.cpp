@@ -15,6 +15,12 @@ CTank::~CTank(void)
 
 void CTank::Init(void)
 {
+	SetHealth(200); // Health of Tank
+	SetDefencePower(100); // Defence stat
+	SetAttackDamage(100); // Attack stat
+	SetAttackSpeed(1.5f); // Attack Speed stat
+	SetAttackRange(1.0f); // Attack Range
+	SetType(TYPE_TANK);
 	SetState(MOVE);
 	moveSpeed = 5.f;
 	UpdateRotation(90);

@@ -52,6 +52,12 @@
     <Filter Include="SceneNodeID">
       <UniqueIdentifier>{6a741198-24fc-4a14-b235-23f790ed9d34}</UniqueIdentifier>
     </Filter>
+    <Filter Include="AI Classes\Boss">
+      <UniqueIdentifier>{55f43248-dcdf-4e92-b2d9-0d7ab4d878c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AI Classes\DPS">
+      <UniqueIdentifier>{956e18ed-5efa-474f-b0e9-bd291a2971f3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp">
@@ -158,6 +164,9 @@
     </ClCompile>
     <ClCompile Include="Source\AI Classes\TankAI.cpp">
       <Filter>AI Classes\Tank</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AI Classes\Boss.cpp">
+      <Filter>AI Classes\Boss</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -283,6 +292,9 @@
     </ClInclude>
     <ClInclude Include="Source\SceneNodeID.h">
       <Filter>SceneNodeID</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AI Classes\Boss.h">
+      <Filter>AI Classes\Boss</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
