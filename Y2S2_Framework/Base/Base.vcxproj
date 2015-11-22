@@ -79,6 +79,7 @@
     <ClInclude Include="Source\SceneManager2D.h" />
     <ClInclude Include="Source\SceneManagerMenu.h" />
     <ClInclude Include="Source\SceneNode.h" />
+    <ClInclude Include="Source\SceneNodeID.h" />
     <ClInclude Include="Source\shader.hpp" />
     <ClInclude Include="Source\SpatialPartition\Grid.h" />
     <ClInclude Include="Source\SpatialPartition\SpatialPartition.h" />

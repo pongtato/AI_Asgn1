@@ -50,7 +50,7 @@ void CTransform::SetRotate( const float angle, const float rx, const float ry, c
 {
 	Mtx44 TempMtx;
 	TempMtx.SetToRotation( angle, rx, ry, rz );
-	
+
 	//Mtx44 MtxBackToOrigin;
 
 	//MtxBackToOrigin.a[ 12 ] = -Mtx.a[ 12 ];

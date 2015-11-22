@@ -1,4 +1,5 @@
 #pragma once
+#include "Vector3.h"
 
 class CArtificialIntellegence
 {
@@ -9,7 +10,7 @@ public:
 	~CArtificialIntellegence(void);
 
 	virtual void Init(void) = 0;
-	virtual void RunFSM(void) = 0;
+	virtual void RunFSM(double dt) = 0;
 
 
 	// States
@@ -19,9 +20,19 @@ public:
 	// Types
 	void SetType(int);
 	int GetType(void);
-	
-private:
+
+	virtual Vector3 GetPosition();
+	virtual void UpdatePosition(Vector3 newPosition);
+
+	virtual void UpdateRotation(float newRotate);
+	virtual float GetRotation();
+
+protected:
 
 	int state; // AI State (Eg. Avoid/Taunt)
 	int type; // AI job type (Eg. Boss/Tank)
+	Vector3 Position;
+	float m_RotateAmount;
+	int moveSpeed;
+	
 };

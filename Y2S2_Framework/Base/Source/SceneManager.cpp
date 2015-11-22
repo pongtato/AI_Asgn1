@@ -8,6 +8,7 @@
 #include "LoadTGA.h"
 #include <sstream>
 #include "MyMath.h"
+#include "SceneNodeID.h"
 
 CSceneManager::CSceneManager(void)
 	: m_cMinimap			(NULL)
@@ -366,6 +367,40 @@ void CSceneManager::Init()
 	bLightEnabled = true;
 }
 
+/********************************************************************************
+Translate Node
+********************************************************************************/
+void CSceneManager::NodeTranslate(CSceneNode *theNode, int theNodeChildID, float TranslateX, float TranslateY, float TranslateZ)
+{
+	//Moving child
+	if (theNodeChildID > 0)
+	{
+		theNode->GetNode(theNodeChildID)->ApplyTranslate(TranslateX, TranslateY, TranslateZ);
+	}
+	//Move Node
+	else
+	{
+		theNode->ApplyTranslate(TranslateX, TranslateY, TranslateZ);
+	}
+}
+
+/********************************************************************************
+Rotate node
+********************************************************************************/
+void CSceneManager::NodeRotate(CSceneNode *theNode, int theNodeChildID , float RotateAmount , float RotateX , float RotateY , float RotateZ )
+{
+	//Moving child
+	if (theNodeChildID > 0)
+	{
+		theNode->GetNode(theNodeChildID)->ApplyRotate(RotateAmount, RotateX, RotateY, RotateZ);
+	}
+	//Move Node
+	else
+	{
+		theNode->ApplyRotate(RotateAmount, RotateX, RotateY, RotateZ);
+	}
+}
+
 void CSceneManager::Update(double dt)
 {
 	if(Application::IsKeyPressed('1'))
@@ -424,11 +459,40 @@ void CSceneManager::Update(double dt)
 	//camera.UpdatePosition(m_cAvatar->GetPosition(), m_cAvatar->GetDirection());
 	camera.Update(dt);
 
+	//Update ai movement
+	FSMApplication(dt);
 	//Update the spatial partition
 	m_cSpatialPartition->Update();
 	//m_cSpatialPartition->PrintSelf();
 
 	fps = (float)(1.f / dt);
+}
+
+/********************************************************************************
+Update AI Position
+********************************************************************************/
+void CSceneManager::FSMApplication(double dt)
+{
+	#define NOCHILD 0
+
+	TankAI.Init();
+	TankAI.RunFSM(dt);
+
+	NodeTranslate(m_cWarrior, NOCHILD, TankAI.GetPosition().x, TankAI.GetPosition().y, TankAI.GetPosition().z);
+
+	static float CompareRotation;
+	if (CompareRotation != TankAI.GetRotation())
+	{
+		CompareRotation = TankAI.GetRotation();
+		NodeRotate(m_cWarrior, NOCHILD, CompareRotation, 0, 1, 0);
+	}
+
+
+	//NodeTranslate(dt, m_cWarrior, WARRIOR_SWORD_ID, TankAI->GetPosition().x, TankAI->GetPosition().y, TankAI->GetPosition().z);
+	//NodeRotate(dt, m_cWarrior, WARRIOR_SWORD_ID, TankAI->GetShieldRotation(), 0, 1, 0);
+
+	//NodeTranslate(dt, m_cWarrior, WARRIOR_SHIELD_ID, TankAI->GetPosition().x, TankAI->GetPosition().y, TankAI->GetPosition().z);
+	//NodeRotate(dt, m_cWarrior, WARRIOR_SHIELD_ID, TankAI->GetSwordRotation(), 0, 1, 0);
 }
 
 /********************************************************************************
@@ -666,7 +730,7 @@ void CSceneManager::RenderMobileObjects()
 	// Render cone
 	modelStack.PushMatrix();
 	modelStack.Translate(m_cAvatar->GetPos_x(), m_cAvatar->GetPos_y(), m_cAvatar->GetPos_z());
-	RenderMesh(m_cAvatar->theAvatarMesh, false);
+	//RenderMesh(m_cAvatar->theAvatarMesh, false);
 	modelStack.PopMatrix();
 }
 

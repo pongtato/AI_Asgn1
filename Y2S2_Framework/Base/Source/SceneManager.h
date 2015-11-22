@@ -11,6 +11,7 @@
 #include "PlayInfo3PV.h"
 #include "SceneNode.h"
 #include "SpatialPartition/SpatialPartition.h"
+#include "AI Classes\TankAI.h"
 
 
 const float SKYBOXSIZE = 1000.f;
@@ -129,6 +130,10 @@ public:
 	void RenderGround();
 	void RenderSkybox();
 
+	void FSMApplication(double dt);
+	void NodeTranslate(CSceneNode *theNode, int theNodeChildID = 0, float TranslateX = 0.0f, float TranslateY = 0.0f, float TranslateZ = 0.0f);
+	void NodeRotate(CSceneNode *theNode, int theNodeChildID = 0, float RotateAmount = 0.0f, float RotateX = 0.0f, float RotateY = 0.0f, float RotateZ = 0.0f);
+
 	enum WEAPON_ACTION
 	{
 		WA_NIL = 0,
@@ -176,6 +181,9 @@ private:
 	CSceneNode* m_cHealer;
 	CSceneNode* m_cMage;
 	CSceneNode* m_cBoss;
+
+	//AI FSMs
+	CTank TankAI;
 
 	// The spatial partition
 	CSpatialPartition* m_cSpatialPartition;
