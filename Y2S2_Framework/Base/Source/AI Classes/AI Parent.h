@@ -56,6 +56,14 @@ public:
 	virtual void UpdateRotation(float newRotate);
 	virtual float GetRotation();
 
+	virtual void UpdatePrevRotation(float newRotate);
+	virtual float GetPrevRotation();
+
+	virtual Vector3 GetPrevPosition();
+	virtual void UpdatePrevPosition(Vector3 newPosition);
+
+	virtual Vector3 GetDirection(void);
+
 protected:
 	int health;			// HP of this AI
 	int defencePower;	// DEF of this AI
@@ -65,7 +73,12 @@ protected:
 	int state; // AI State (Eg. Avoid/Taunt)
 	int type; // AI job type (Eg. Boss/Tank)
 	Vector3 Position;
+	Vector3 PrevPosition;
+	float m_PrevRotation;
 	float m_RotateAmount;
-	int moveSpeed;
+	
+	float moveSpeed;
+	float AtkSpeed;
+	
 	
 };

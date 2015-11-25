@@ -140,7 +140,7 @@ void CSpatialPartition::AddObject(CSceneNode* theObject)
 		}
 	}
 
-	cout << "TL: " <<  index_topleft << "TR: " << index_bottomright << endl;
+	//cout << "TL: " <<  index_topleft << "TR: " << index_bottomright << endl;
 }
 
 /********************************************************************************

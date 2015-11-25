@@ -382,17 +382,17 @@ void CSceneManager::InitMeshList()
 /********************************************************************************
 Translate Node
 ********************************************************************************/
-void CSceneManager::NodeTranslate(CSceneNode *theNode, int theNodeChildID, float TranslateX, float TranslateY, float TranslateZ)
+void CSceneManager::NodeTranslate(CSceneNode *theNode, int theNodeChildID, Vector3 newDirection)
 {
 	//Moving child
 	if (theNodeChildID > 0)
 	{
-		theNode->GetNode(theNodeChildID)->ApplyTranslate(TranslateX, TranslateY, TranslateZ);
+		theNode->GetNode(theNodeChildID)->ApplyTranslate(newDirection.x, newDirection.y, newDirection.z);
 	}
 	//Move Node
 	else
 	{
-		theNode->ApplyTranslate(TranslateX, TranslateY, TranslateZ);
+		theNode->ApplyTranslate(newDirection.x, newDirection.y, newDirection.z);
 	}
 }
 
@@ -472,7 +472,8 @@ void CSceneManager::Update(double dt)
 	camera.Update(dt);
 
 	//Update ai movement
-	FSMApplication(dt);
+	TankAI.RunFSM(dt);
+	BossAI.RunFSM(dt);
 	//Update the spatial partition
 	m_cSpatialPartition->Update();
 	//m_cSpatialPartition->PrintSelf();
@@ -483,27 +484,37 @@ void CSceneManager::Update(double dt)
 /********************************************************************************
 Update AI Position
 ********************************************************************************/
-void CSceneManager::FSMApplication(double dt)
+void CSceneManager::FSMApplication()
 {
 	#define NOCHILD 0
 
-	
-	TankAI.RunFSM(dt);
-	BossAI.RunFSM(dt);
-	
+	//Move the unit
+	NodeTranslate(m_cWarrior, NOCHILD, TankAI.GetDirection());
+	//Unit rotation
+	//NodeRotate(m_cWarrior, NOCHILD, TankAI.GetRotation(), 0, 1, 0);
 
-	NodeTranslate(m_cWarrior, NOCHILD, TankAI.GetPosition().x, TankAI.GetPosition().y, TankAI.GetPosition().z);
+	NodeRotate(m_cWarrior, WARRIOR_SWORD_ID, TankAI.GetSwordRotation(), 0, 0, 1);
+	//NodeRotate(m_cWarrior, WARRIOR_SHIELD_ID, TankAI.GetShieldRotation(), 0, 1, 0);
 
-	static float CompareRotation;
-	if (CompareRotation != TankAI.GetRotation())
+	//Unit rotation
+	if (TankAI.GetPrevRotation() != TankAI.GetRotation())
 	{
-		CompareRotation = TankAI.GetRotation();
-		NodeRotate(m_cWarrior, NOCHILD, CompareRotation, 0, 1, 0);
+		TankAI.UpdatePrevRotation(TankAI.GetRotation());
+		NodeRotate(m_cWarrior, NOCHILD, TankAI.GetRotation(), 0, 1, 0);
 	}
 
-
 	//NodeTranslate(dt, m_cWarrior, WARRIOR_SWORD_ID, TankAI->GetPosition().x, TankAI->GetPosition().y, TankAI->GetPosition().z);
-	//NodeRotate(dt, m_cWarrior, WARRIOR_SWORD_ID, TankAI->GetShieldRotation(), 0, 1, 0);
+	if (TankAI.GetSwordPrevRotation() != TankAI.GetSwordRotation())
+	{
+		TankAI.UpdateSwordPrevRotation(TankAI.GetSwordRotation());
+		NodeRotate(m_cWarrior, WARRIOR_SWORD_ID, TankAI.GetSwordRotation(), 0, 0, 1);
+	}
+
+	if (TankAI.GetShieldPrevRotation() != TankAI.GetShieldRotation())
+	{
+		TankAI.UpdateShieldPrevRotation(TankAI.GetShieldRotation());
+		NodeRotate(m_cWarrior, WARRIOR_SHIELD_ID, TankAI.GetShieldRotation(), 0, 1, 0);
+	}
 
 	//NodeTranslate(dt, m_cWarrior, WARRIOR_SHIELD_ID, TankAI->GetPosition().x, TankAI->GetPosition().y, TankAI->GetPosition().z);
 	//NodeRotate(dt, m_cWarrior, WARRIOR_SHIELD_ID, TankAI->GetSwordRotation(), 0, 1, 0);
@@ -733,6 +744,8 @@ void CSceneManager::RenderMobileObjects()
 	modelStack.Translate(lights[0].position.x, lights[0].position.y, lights[0].position.z);
 	RenderMesh(meshList[GEO_LIGHTBALL], false);
 	modelStack.PopMatrix();
+
+	FSMApplication();
 
 	//Draw scene graph
 	//m_cSceneGraph->Draw(this);

@@ -5,6 +5,8 @@ CArtificialIntellegence::CArtificialIntellegence(void)
 	, type(-1)
 	, Position(0,0,0)
 	, m_RotateAmount(0)
+	, m_PrevRotation(0)
+	, PrevPosition(0,0,0)
 {
 
 }
@@ -42,20 +44,48 @@ Vector3 CArtificialIntellegence::GetPosition(void)
 
 void CArtificialIntellegence::UpdatePosition(Vector3 newPosition)
 {
-	//get diference in position change
-	this->Position = (newPosition - GetPosition());
+	this->Position = newPosition;
 }
 
 void CArtificialIntellegence::UpdateRotation(float newRotate)
 {
-	//get diference rotation position change
-	this->m_RotateAmount = (newRotate - GetRotation());
+	this->m_RotateAmount = newRotate;
 }
 
 float CArtificialIntellegence::GetRotation(void)
 {
 	return this->m_RotateAmount;
 }
+
+Vector3 CArtificialIntellegence::GetPrevPosition(void)
+{
+	return this->PrevPosition;
+}
+
+void CArtificialIntellegence::UpdatePrevPosition(Vector3 newPosition)
+{
+	this->PrevPosition = newPosition;
+}
+
+void CArtificialIntellegence::UpdatePrevRotation(float newRotate)
+{
+	this->m_PrevRotation = newRotate;
+}
+
+float CArtificialIntellegence::GetPrevRotation(void)
+{
+	return this->m_PrevRotation;
+}
+
+Vector3 CArtificialIntellegence::GetDirection(void)
+{
+	Vector3 Direction;
+	Direction.SetZero();
+	Direction = (this->Position - this->PrevPosition);
+	UpdatePrevPosition(GetPosition());
+	return Direction;
+}
+
 
 // Health
 void CArtificialIntellegence::SetHealth(int health)

@@ -42,14 +42,16 @@ void CTransform::SetTranslate( const float dx, const float dy, const float dz  )
 {
 	Mtx44 TempMtx;
 	TempMtx.SetToTranslation( dx, dy, dz );
-
 	Mtx = Mtx * TempMtx;
+	//Mtx = TempMtx;
 }
 
 void CTransform::SetRotate( const float angle, const float rx, const float ry, const float rz  )
 {
 	Mtx44 TempMtx;
 	TempMtx.SetToRotation( angle, rx, ry, rz );
+	Mtx = Mtx * TempMtx;
+	//Mtx = TempMtx;
 
 	//Mtx44 MtxBackToOrigin;
 
@@ -63,7 +65,7 @@ void CTransform::SetRotate( const float angle, const float rx, const float ry, c
 	//MtxBackToPosition.a[ 14 ] = Mtx.a[ 14 ];
 
 	//Mtx = Mtx * MtxBackToOrigin;
-	Mtx = Mtx * TempMtx;
+	
 	//Mtx = Mtx * MtxBackToPosition;
 }
 
